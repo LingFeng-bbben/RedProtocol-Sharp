@@ -58,6 +58,7 @@ namespace RedProtocol_Sharp
 
     public enum ChatType
     {
+        PRIVATE = 1,
         GROUP = 2,
     }
 
@@ -65,12 +66,14 @@ namespace RedProtocol_Sharp
     {
         public ChatType ChatType { get; set; }
         public string? PeerUid { get; set; }
-        public int?  GuildId = null; // 一直为 Null
+        public string? PeerUin { get; set; }
+        public int? GuildId = null; // 一直为 Null
 
         public Peer(ChatType chatType, string? peerUid)
         {
             ChatType = chatType;
             PeerUid = peerUid;
+            PeerUin = peerUid;
         }
     }
 
@@ -78,8 +81,9 @@ namespace RedProtocol_Sharp
     {
         public Peer Peer { get; set; }
         public int Count { get; set; }
-        public string? OffsetMsgId {  get; set; }
-        public MessageHistorySetting(ChatType chatType,int count, string? peerUid, long? offsetMsgId=0) { 
+        public string? OffsetMsgId { get; set; }
+        public MessageHistorySetting(ChatType chatType, int count, string? peerUid, long? offsetMsgId = 0)
+        {
             Peer = new Peer(chatType, peerUid);
             Count = count;
             OffsetMsgId = offsetMsgId.ToString();
@@ -339,7 +343,8 @@ namespace RedProtocol_Sharp
     {
         public string type { get; set; }
         public Payload payload { get; set; }
-        public OpenWSConfig(string _type, string _token) { 
+        public OpenWSConfig(string _type, string _token)
+        {
             type = _type;
             payload = new Payload() { token = _token };
         }
@@ -376,6 +381,23 @@ namespace RedProtocol_Sharp
         public string A2 { get; set; }
         public string D2 { get; set; }
         public string D2Key { get; set; }
+    }
+
+    public partial class MessageMessage
+    {
+        public string type { get; set; }
+        public MessagePayload payload { get; set; }
+        public MessageMessage(Peer _peer, List<MsgListElement> _msgListElements)
+        {
+            type = "message::send";
+            payload = new MessagePayload() { peer = _peer, elements = _msgListElements };
+        }
+    }
+
+    public partial class MessagePayload
+    {
+        public Peer peer { get; set; }
+        public List<MsgListElement> elements { get; set; } = new List<MsgListElement> { };
     }
 }
 

@@ -85,6 +85,16 @@ namespace RedProtocol_Sharp
             }
         }
 
+        public async Task SendMessage(Peer peer,List<MsgListElement> elements)
+        {
+            var message =  new MessageMessage(peer,elements);
+            var resover = new JsonSerializerSettings();
+            resover.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            string open = JsonConvert.SerializeObject(message,resover);
+            var buf = Encoding.UTF8.GetBytes(open);
+            await ws.SendAsync(buf, WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
         private async Task<string> GetText(string method, string? context = null)
         {
             var req = new HttpRequestMessage(HttpMethod.Get, apiRoot + method);
