@@ -107,7 +107,7 @@ namespace RedProtocol_Sharp
         public long MsgType { get; set; }
         public long SubMsgType { get; set; }
         public long SendType { get; set; }
-        public long PeerUid { get; set; }
+        public string PeerUid { get; set; }
         public string ChannelId { get; set; }
         public string GuildId { get; set; }
         public long GuildCode { get; set; }
@@ -142,7 +142,7 @@ namespace RedProtocol_Sharp
         public string GeneralFlags { get; set; }
         public long ClientSeq { get; set; }
         public string SenderUin { get; set; }
-        public long PeerUin { get; set; }
+        public string PeerUin { get; set; }
     }
 
     public enum ElementType
@@ -271,7 +271,7 @@ namespace RedProtocol_Sharp
         public string AtNtUid { get; set; }
         public long SubElementType { get; set; }
         public long AtChannelId { get; set; }
-        public long AtNtUin { get; set; }
+        public string AtNtUin { get; set; }
         public string AtUin { get; set; }
     }
 
