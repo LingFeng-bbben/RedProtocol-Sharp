@@ -182,5 +182,25 @@ namespace RedProtocol_Sharp
                 }
             };
         }
+        public async Task<string> DownloadImage(string md5)
+        {
+            try
+            {
+                Console.WriteLine("Downloading image:\n" + md5);
+                string targetpath = "images/";
+                Directory.CreateDirectory(targetpath);
+                var req = new HttpRequestMessage(HttpMethod.Get, "https://gchat.qpic.cn/gchatpic_new/0/0-0-" + md5.ToUpper() + "/0?term=2");
+                var resp = await Client.SendAsync(req);
+                var bytes = await resp.Content.ReadAsByteArrayAsync();
+                var type = resp.Content.Headers.ContentType.MediaType.Split("/")[1];
+                targetpath = targetpath + md5 + "." + type;
+                File.WriteAllBytes(targetpath, bytes);
+                return targetpath;
+            }catch (Exception ex)
+            {
+                Console.WriteLine("Failed to download image:\n"+ ex.Message);
+                return null;
+            }
+        }
     }
 }

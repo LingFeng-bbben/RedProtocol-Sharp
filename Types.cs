@@ -238,7 +238,7 @@ namespace RedProtocol_Sharp
 
     public partial class ReplyElement
     {
-        public long ReplayMsgId { get; set; }
+        public string ReplayMsgId { get; set; }
         public long ReplayMsgSeq { get; set; }
         public long ReplayMsgRootSeq { get; set; }
         public long ReplayMsgRootMsgId { get; set; }
@@ -305,7 +305,7 @@ namespace RedProtocol_Sharp
         public string SendNickName { get; set; }
         public string GuildName { get; set; }
         public string ChannelName { get; set; }
-        public RecordElement[] Elements { get; set; }
+        public MsgListElement[] Elements { get; set; }
         public object[] Records { get; set; }
         public object[] EmojiLikesList { get; set; }
         public long CommentCnt { get; set; }
@@ -329,15 +329,6 @@ namespace RedProtocol_Sharp
         public long SenderUin { get; set; }
         public long PeerUin { get; set; }
     }
-
-    public partial class RecordElement
-    {
-        public long ElementType { get; set; }
-        public string ElementId { get; set; }
-        public string ExtBufForUi { get; set; }
-        public TextElement TextElement { get; set; }
-    }
-
 
     public partial class OpenWSConfig
     {
