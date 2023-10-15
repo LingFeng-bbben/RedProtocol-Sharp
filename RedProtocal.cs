@@ -3,6 +3,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace RedProtocol_Sharp
             accessToken = "Bearer " + token;
             apiRoot = "http://"+ Url + "/api/";
             Client.BaseAddress = new Uri(apiRoot);
+            Client.DefaultRequestHeaders.Add("Authorization", accessToken);
         }
         public async Task WsConnect()
         {
@@ -95,11 +97,21 @@ namespace RedProtocol_Sharp
             await ws.SendAsync(buf, WebSocketMessageType.Text, true, CancellationToken.None);
         }
 
-        private async Task<string> GetText(string method, string? context = null)
+        private async Task<string> GetText(string method, string? context = null, byte[]? image = null)
         {
             var req = new HttpRequestMessage(HttpMethod.Get, apiRoot + method);
-            req.Headers.Add("Authorization", accessToken);
             if (context != null) req.Content = new StringContent(context);
+            if(image != null)
+            {
+                var filecontent = new ByteArrayContent(image);
+                filecontent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+                var content = new MultipartFormDataContent
+                {
+                    { filecontent, "\"file\"" ,"s1b"}
+                };
+                req.Content = content;
+                req.Method = HttpMethod.Post;
+            }
             var resp = await Client.SendAsync(req);
             var text = await resp.Content.ReadAsStringAsync();
             return text;
@@ -145,6 +157,30 @@ namespace RedProtocol_Sharp
         {
             var obj = await GetObject<MessageReturn>("/message/getHistory", historySetting);
             return obj;
+        }
+
+        public async Task<MsgListElement> UploadImage(string path)
+        {
+            Console.WriteLine("正在上传" + path + " ...");
+            if (!File.Exists(path)) { 
+                Console.WriteLine("No such file of " + path);
+                return null;
+            }
+            var bytes = await File.ReadAllBytesAsync(path);
+            var text = await GetText("upload",null,bytes);
+            var obj = JsonConvert.DeserializeObject<ImageUpResponse>(text);
+            Console.WriteLine("上传"+path+"成功");
+            return new MsgListElement()
+            {
+                ElementType = ElementType.PicElement,
+                PicElement = new PicElement()
+                {
+                    Md5HexStr = obj.Md5,
+                    FileSize = obj.FileSize,
+                    FileName = obj.NtFilePath.Split('/').Last(),
+                    SourcePath = obj.NtFilePath
+                }
+            };
         }
     }
 }

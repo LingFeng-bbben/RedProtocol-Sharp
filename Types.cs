@@ -399,6 +399,15 @@ namespace RedProtocol_Sharp
         public Peer peer { get; set; }
         public List<MsgListElement> elements { get; set; } = new List<MsgListElement> { };
     }
+
+    public partial class ImageUpResponse
+    {
+        public string Md5 { get; set; }
+        //public ImageInfo ImageInfo { get; set; }
+        public long FileSize { get; set; }
+        public string FilePath { get; set; }
+        public string NtFilePath { get; set; }
+    }
 }
 
 
